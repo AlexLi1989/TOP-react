@@ -1,28 +1,38 @@
-import Card from "./Card.jsx";
-export default function Profile() {
+import { useState } from "react";
+import { sculptureList } from "../data/data.js";
+
+export default function Gallery() {
+  const [index, setIndex] = useState(0);
+  const [showMore, setShowMore] = useState(false);
+
+  function handleNextClick() {
+    setIndex((index + 1) % sculptureList.length);
+  }
+
+  function handlePrevClick() {
+    setIndex((index - 1 + sculptureList.length) % sculptureList.length);
+  }
+  function handleMoreClick() {
+    setShowMore(!showMore);
+  }
+
+  let sculpture = sculptureList[index];
   return (
-    <div>
-      <Card>
-        <div className="card-content">
-          <h1>Photo</h1>
-          <img
-            className="avatar"
-            src="https://react.dev/images/docs/scientists/OKS67lhm.jpg"
-            alt="Aklilu Lemma"
-            width={70}
-            height={70}
-          />
-        </div>
-      </Card>
-      <Card>
-        <div className="card-content">
-          <h1>About</h1>
-          <p>
-            Aklilu Lemma was a distinguished Ethiopian scientist who discovered
-            a natural treatment to schistosomiasis.
-          </p>
-        </div>
-      </Card>
-    </div>
+    <>
+      <button onClick={handleNextClick}>Next</button>
+      <button onClick={handlePrevClick}>Prev</button>
+      <h2>
+        <i>{sculpture.name} </i>
+        by {sculpture.artist}
+      </h2>
+      <h3>
+        ({index + 1} of {sculptureList.length})
+      </h3>
+      <button onClick={handleMoreClick}>
+        {showMore ? "Hide" : "Show"} details
+      </button>
+      {showMore && <p>{sculpture.description}</p>}
+      <img src={sculpture.url} alt={sculpture.alt} />
+    </>
   );
 }

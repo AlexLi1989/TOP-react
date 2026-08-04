@@ -1,29 +1,33 @@
 import { useState } from "react";
-import { initialLetters } from "../data/data.js";
+import { letters } from "../data/data.js";
 import Letter from "./Letter.jsx";
 
 export default function MailClient() {
-  const [letters, setLetters] = useState(initialLetters);
-  const [highlightedLetterID, setHighlightedLetterID] = useState(null);
+  const [selectedId, setSelectedId] = useState([]);
 
-  function handleHover(letter) {
-    setHighlightedLetterID(letter?.id ?? null);
-  }
+  const selectedCount = selectedId.length;
 
-  function handleStar(starred) {
-    setLetters(
-      letters.map((letter) => {
-        if (letter.id === starred.id) {
-          return {
-            ...letter,
-            isStarred: !letter.isStarred,
-          };
-        } else {
-          return letter;
-        }
-      }),
+  function handleToggle(toggledId) {
+    setSelectedId((prevSelectedId) =>
+      prevSelectedId.includes(toggledId)
+        ? prevSelectedId.filter((id) => id !== toggledId)
+        : [...prevSelectedId, toggledId],
     );
   }
+  // alternate and better way is to use Set instead of array,as set naturally removes duplicates
+  // const [selectedID, setSelectedId] = useState(new Set());
+  // const selectedCount = selectedId.size;
+  // function handleToggle(toggledId) {
+  //   setSelectedId((prevSelectedId) => {
+  //     const nextIds = new Set(prevSelectedIds);
+  //     if (nextIds.has(toggledId)) {
+  //       nextIds.delete(toggledId);
+  //     } else {
+  //       nextIds.add(toggledId);
+  //     }
+  //     return nextIds;
+  //   });
+  // }
 
   return (
     <>
@@ -33,11 +37,15 @@ export default function MailClient() {
           <Letter
             key={letter.id}
             letter={letter}
-            isHighlighted={letter.id === highlightedLetterID}
-            onHover={handleHover}
-            onToggleStar={handleStar}
+            isSelected={selectedId.includes(letter.id)}
+            //is selected={selectedID.has(letter.id)}
+            onToggle={handleToggle}
           />
         ))}
+        <hr />
+        <p>
+          <b>You selected {selectedCount} letters</b>
+        </p>
       </ul>
     </>
   );

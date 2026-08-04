@@ -1,22 +1,40 @@
 import { useState } from "react";
+import { foods, filterItems } from "../data/data.js";
 
-export default function SyncedInputs() {
-  const [text, setText] = useState("");
+export default function FilterableList() {
+  const [query, setQuery] = useState("");
   function handleChange(e) {
-    setText(e.target.value);
+    setQuery(e.target.value);
   }
+  const filteredFoods = filterItems(foods, query.trim());
   return (
     <>
-      <Input label="First input" value={text} onChange={handleChange} />
-      <Input label="Second input" value={text} onChange={handleChange} />
+      <SearchBar value={query} onChange={handleChange} />
+      <hr />
+      <List items={filteredFoods} />
     </>
   );
 }
 
-function Input({ label, value, onChange }) {
+function SearchBar({ value, onChange }) {
   return (
     <label>
-      {label} <input value={value} onChange={onChange} />
+      Search: <input value={value} onChange={onChange} />
     </label>
+  );
+}
+
+function List({ items }) {
+  return (
+    <table>
+      <tbody>
+        {items.map((food) => (
+          <tr key={food.id}>
+            <td>{food.name}</td>
+            <td>{food.description}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 }

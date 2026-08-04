@@ -5,9 +5,11 @@ import App from "./App.jsx";
 import Greeting from "./components/Greeting.jsx";
 import { Recipe } from "./components/Recipe.jsx";
 import Practice from "./components/Practice";
+import Person from "./components/Person.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Practice />
+    <Person />
   </StrictMode>,
 );

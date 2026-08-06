@@ -10,6 +10,5 @@ import Person from "./components/Person.jsx";
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Practice />
-    <Person />
   </StrictMode>,
 );

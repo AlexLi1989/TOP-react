@@ -1,40 +1,39 @@
-import { useState } from "react";
-import { foods, filterItems } from "../data/data.js";
+import { useState, useEffect } from "react";
+import { createConnection } from "./chat";
 
-export default function FilterableList() {
-  const [query, setQuery] = useState("");
-  function handleChange(e) {
-    setQuery(e.target.value);
-  }
-  const filteredFoods = filterItems(foods, query.trim());
+const serverUrl = "https://localhost:1234";
+
+function ChatRoom({ roomId }) {
+  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    const connection = createConnection(serverUrl, roomId);
+    connection.connect();
+    return () => connection.disconnect();
+  }, [roomId]);
+
   return (
     <>
-      <SearchBar value={query} onChange={handleChange} />
-      <hr />
-      <List items={filteredFoods} />
+      <h1>Welcome to the {roomId} room!</h1>
+      <input value={message} onChange={(e) => setMessage(e.target.value)} />
     </>
   );
 }
 
-function SearchBar({ value, onChange }) {
+export default function App() {
+  const [roomId, setRoomId] = useState("general");
   return (
-    <label>
-      Search: <input value={value} onChange={onChange} />
-    </label>
-  );
-}
-
-function List({ items }) {
-  return (
-    <table>
-      <tbody>
-        {items.map((food) => (
-          <tr key={food.id}>
-            <td>{food.name}</td>
-            <td>{food.description}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <>
+      <label>
+        Choose the chat room:{" "}
+        <select value={roomId} onChange={(e) => setRoomId(e.target.value)}>
+          <option value="general">general</option>
+          <option value="travel">travel</option>
+          <option value="music">music</option>
+        </select>
+      </label>
+      <hr />
+      <ChatRoom roomId={roomId} />
+    </>
   );
 }

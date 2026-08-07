@@ -1,53 +1,45 @@
 import { useState, useEffect } from "react";
 
-export default function EditContact({ savedContact, onSave }) {
-  const [name, setName] = useState(savedContact.name);
-  const [email, setEmail] = useState(savedContact.email);
-  const [prevId, setPrevId] = useState(savedContact.id);
-  if (prevId !== savedContact.id) {
-    setName(savedContact.name);
-    setEmail(savedContact.email);
-    setPrevId(savedContact.id);
+export default function Form() {
+  const [showForm, setShowForm] = useState(false);
+  const [message, setMessage] = useState("");
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    sendMessage(message);
+    setShowForm(false);
+  }
+
+  if (!showForm) {
+    return (
+      <>
+        <h1>Thanks for using our services!</h1>
+        <button
+          onClick={() => {
+            setMessage("");
+            setShowForm(true);
+          }}
+        >
+          Open chat
+        </button>
+      </>
+    );
   }
 
   return (
-    <section>
-      <label>
-        Name:{" "}
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-      </label>
-      <label>
-        Email:{" "}
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-      </label>
-      <button
-        onClick={() => {
-          const updatedData = {
-            id: savedContact.id,
-            name: name,
-            email: email,
-          };
-          onSave(updatedData);
-        }}
-      >
-        Save
+    <form onSubmit={handleSubmit}>
+      <textarea
+        placeholder="Message"
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+      />
+      <button type="submit" disabled={message === ""}>
+        Send
       </button>
-      <button
-        onClick={() => {
-          setName(savedContact.name);
-          setEmail(savedContact.email);
-        }}
-      >
-        Reset
-      </button>
-    </section>
+    </form>
   );
+}
+
+function sendMessage(message) {
+  console.log("Sending message: " + message);
 }

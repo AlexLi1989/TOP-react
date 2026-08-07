@@ -1,38 +1,53 @@
-import { useState, useMemo } from "react";
-import { initialTodos, createTodo, getVisibleTodos } from "./todos";
+import { useState, useEffect } from "react";
 
-export default function TodoList() {
-  const [todos, setTodos] = useState(initialTodos);
-  const [showActive, setShowActive] = useState(false);
-  const [text, setText] = useState("");
-  const visibleTodos = useMemo(() => {
-    return getVisibleTodos(todos, showActive);
-  }, [todos, showActive]); // useMemo will only recompute the visibleTodos if todos or showActive change
-
-  function handleAddClick() {
-    setText("");
-    setTodos([...todos, createTodo(text)]);
+export default function EditContact({ savedContact, onSave }) {
+  const [name, setName] = useState(savedContact.name);
+  const [email, setEmail] = useState(savedContact.email);
+  const [prevId, setPrevId] = useState(savedContact.id);
+  if (prevId !== savedContact.id) {
+    setName(savedContact.name);
+    setEmail(savedContact.email);
+    setPrevId(savedContact.id);
   }
 
   return (
-    <>
+    <section>
       <label>
+        Name:{" "}
         <input
-          type="checkbox"
-          checked={showActive}
-          onChange={(e) => setShowActive(e.target.checked)}
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
         />
-        Show only active todos
       </label>
-      <input value={text} onChange={(e) => setText(e.target.value)} />
-      <button onClick={handleAddClick}>Add</button>
-      <ul>
-        {visibleTodos.map((todo) => (
-          <li key={todo.id}>
-            {todo.completed ? <s>{todo.text}</s> : todo.text}
-          </li>
-        ))}
-      </ul>
-    </>
+      <label>
+        Email:{" "}
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+      </label>
+      <button
+        onClick={() => {
+          const updatedData = {
+            id: savedContact.id,
+            name: name,
+            email: email,
+          };
+          onSave(updatedData);
+        }}
+      >
+        Save
+      </button>
+      <button
+        onClick={() => {
+          setName(savedContact.name);
+          setEmail(savedContact.email);
+        }}
+      >
+        Reset
+      </button>
+    </section>
   );
 }

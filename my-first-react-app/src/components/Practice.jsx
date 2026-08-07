@@ -1,84 +1,47 @@
 import { useState, useEffect } from "react";
-import { fetchData } from "./api.js";
+import { initialTodos, createTodo } from "./todos";
 
-export default function Page() {
-  const [planetList, setPlanetList] = useState([]);
-  const [planetId, setPlanetId] = useState("");
+export default function TodoList() {
+  const [todos, setTodos] = useState(initialTodos);
+  const [showActive, setShowActive] = useState(false);
+  const activeTodos = todos.filter((todo) => !todo.completed);
+  const renderTodos = (todos) => {
+    return todos.map((todo) => (
+      <li key={todo.id}>{todo.completed ? <s>{todo.text}</s> : todo.text}</li>
+    ));
+  };
+  const onAdd = (text) =>
+    setTodos((prevTodos) => [...prevTodos, createTodo(text)]);
 
-  const [placeList, setPlaceList] = useState([]);
-  const [placeId, setPlaceId] = useState("");
-
-  useEffect(() => {
-    let ignore = false; //ignore variable utilizes closures to prevent memory leaks upon early unmounting, manage Strict Mode double-rendering, and crucially, prevent race conditions when the effect triggers multiple times in rapid succession
-    fetchData("/planets").then((result) => {
-      if (!ignore) {
-        console.log("Fetched a list of planets.");
-        setPlanetList(result);
-        if (result?.length > 0) //in case planets array is empty
-        {
-          setPlanetId(result[0].id);
-        }
-      }
-    });
-    return () => {
-      ignore = true;
-    };
-  }, []);
-  useEffect(() => {
-    if (!planetId) return;
-    let ignore = false;
-    fetchData("/planets/" + planetId + "/places").then((result) => {
-      if (!ignore) {
-        console.log("Fetched a list of places.");
-        setPlaceList(result);
-        if (result?.length > 0) //in case places array is empty
-        {
-          setPlaceId(result[0].id);
-        }
-      }
-    });
-    return () => {
-      ignore = true;
-    };
-  }, [planetId]);
   return (
     <>
       <label>
-        Pick a planet:{" "}
-        <select
-          value={planetId}
-          onChange={(e) => {
-            setPlanetId(e.target.value);
-            setPlaceList([]);
-            setPlaceId("");
-          }}
-        >
-          {planetList.map((planet) => (
-            <option key={planet.id} value={planet.id}>
-              {planet.name}
-            </option>
-          ))}
-        </select>
+        <input
+          type="checkbox"
+          checked={showActive}
+          onChange={(e) => setShowActive(e.target.checked)}
+        />
+        Show only active todos
       </label>
-      <label>
-        Pick a place:{" "}
-        <select
-          value={placeId}
-          onChange={(e) => {
-            setPlaceId(e.target.value);
-          }}
-        >
-          {placeList.map((place) => (
-            <option key={place.id} value={place.id}>
-              {place.name}
-            </option>
-          ))}
-        </select>
-      </label>
-      <hr />
-      <p>
-        You are going to: {placeId || "???"} on {planetId || "???"}{" "}
-      </p>
+      <NewTodo onAdd={onAdd} />
+      <ul>{renderTodos(showActive ? activeTodos : todos)}</ul>
+      <footer>{activeTodos.length} todos left</footer>
+    </>
+  );
+}
+
+function NewTodo({ onAdd }) {
+  const [text, setText] = useState("");
+
+  function handleAddClick() {
+    setText("");
+    onAdd(text);
+  }
+
+  return (
+    <>
+      <input value={text} onChange={(e) => setText(e.target.value)} />
+      <button onClick={handleAddClick}>Add</button>
     </>
   );
 }

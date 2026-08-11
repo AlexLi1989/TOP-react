@@ -1,19 +1,22 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+// App.jsx
 
-function App() {
-  const [count, setCount] = useState(0)
+import { useState } from "react";
+
+const App = () => {
+  const [heading, setHeading] = useState("Magnificent Monkeys");
+
+  const clickHandler = () => {
+    setHeading("Radical Rhinos");
+  };
 
   return (
     <>
-      <section id="center">
-        <h1 className="title">Hello,World!</h1>
-      </section>
+      <button type="button" onClick={clickHandler}>
+        Click Me
+      </button>
+      <h1>{heading}</h1>
     </>
-  )
-}
+  );
+};
 
-export default App
+export default App;

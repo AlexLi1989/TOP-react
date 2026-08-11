@@ -1,25 +1,50 @@
-// App.test.jsx
-
-import { describe, it, expect } from "vitest";
-import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import {
+  render,
+  screen,
+  waitForElementToBeRemoved,
+} from "@testing-library/react";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import App from "./App";
 
-describe("App component", () => {
-  it("renders magnificent monkeys", () => {
-    // since screen does not have the container property, we'll destructure render to obtain a container for this test
-    const { container } = render(<App />);
-    expect(container).toMatchSnapshot();
+describe("App Component API Tests", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
+  it("loading text is shown while api is in progress", async () => {
+    const mockUser = { name: "Jack", email: "jack@email.com" };
 
-  it("renders radical rhinos after button click", async () => {
-    const user = userEvent.setup();
+    vi.spyOn(globalThis, "fetch").mockImplementation(() =>
+      Promise.resolve({
+        json: () => Promise.resolve(mockUser),
+      }),
+    );
 
     render(<App />);
-    const button = screen.getByRole("button", { name: "Click Me" });
+    const loadingText = screen.getByText("Loading...");
+    expect(loadingText).toBeInTheDocument();
+    await waitForElementToBeRemoved(() => screen.queryByText("Loading..."));
+  });
+  it("should fetch and render user data", async () => {
+    const mockUser = { name: "Jack", email: "jack@email.com" };
 
-    await user.click(button);
+    vi.spyOn(globalThis, "fetch").mockImplementation(() =>
+      Promise.resolve({
+        json: () => Promise.resolve(mockUser),
+      }),
+    );
 
-    expect(screen.getByRole("heading").textContent).toMatch(/radical rhinos/i);
+    render(<App />);
+
+    const nameElement = await screen.findByRole("heading", { name: /jack/i });
+    expect(nameElement).toBeInTheDocument();
+  });
+  it("shows error message when fetch fails", async () => {
+    const error = new Error("API is down");
+    vi.spyOn(globalThis, "fetch").mockImplementation(() =>
+      Promise.reject(error),
+    );
+    render(<App />);
+    const errorMessage = await screen.findByText("API is down");
+    expect(errorMessage).toBeInTheDocument();
   });
 });

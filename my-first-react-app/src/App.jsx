@@ -1,22 +1,31 @@
-// App.jsx
+import React from "react";
 
-import { useState } from "react";
-
-const App = () => {
-  const [heading, setHeading] = useState("Magnificent Monkeys");
-
-  const clickHandler = () => {
-    setHeading("Radical Rhinos");
-  };
+function User(props) {
+  const { name, email } = props.user;
 
   return (
-    <>
-      <button type="button" onClick={clickHandler}>
-        Click Me
-      </button>
-      <h1>{heading}</h1>
-    </>
+    <div className="person">
+      <h3>{name}</h3>
+      <span>{email}</span>
+    </div>
   );
-};
+}
+function App() {
+  const [user, setUser] = React.useState(null);
+  const [error, setError] = React.useState("");
+
+  React.useEffect(() => {
+    fetch("https://jsonplaceholder.typicode.com/users/1")
+      .then((response) => response.json())
+      .then((user) => setUser(user))
+      .catch((error) => setError(error.message));
+  }, []);
+
+  if (error) {
+    return <span>{error}</span>;
+  }
+
+  return <div>{user ? <User user={user} /> : <span>Loading...</span>}</div>;
+}
 
 export default App;

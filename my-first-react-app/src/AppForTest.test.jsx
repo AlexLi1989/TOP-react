@@ -5,7 +5,7 @@ import {
 } from "@testing-library/react";
 import { describe, it, expect, vi, afterEach } from "vitest";
 import userEvent from "@testing-library/user-event";
-import { App, Input } from "./App";
+import { App, Input } from "./AppForTest";
 
 describe("App Component API Tests", () => {
   afterEach(() => {

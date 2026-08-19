@@ -1,28 +1,60 @@
-import { createBrowserRouter, RouterProvider } from "react-router";
-import Layout from "./layout/Layout";
-import ErrorPage from "./components/ErrorPage";
-import Profile from "./components/Profile";
-
-const Home = () => <h2>This is Home</h2>;
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Layout />,
-    errorElement: <ErrorPage />,
-    children: [
-      {
-        index: true,
-        element: <Home />,
-      },
-      {
-        path: "profile/:name",
-        element: <Profile />,
-      },
-    ],
-  },
-]);
+import { useState } from "react"; // 💡 1. 記得匯入 useState
+import { places } from "./data/data.js";
+import { getImageUrl } from "./components/utils";
+import { ImageSizeProvider } from "./components/ImageSizeContext";
+import { useImageSize } from "./components/useImageSize";
 
 export default function App() {
-  return <RouterProvider router={router} />;
+  const [isLarge, setIsLarge] = useState(false);
+  const imageSize = isLarge ? 150 : 100;
+
+  return (
+    <>
+      <label>
+        <input
+          type="checkbox"
+          checked={isLarge}
+          onChange={(e) => setIsLarge(e.target.checked)}
+        />
+        Use large images
+      </label>
+      <hr />
+      <ImageSizeProvider value={imageSize}>
+        <List />
+      </ImageSizeProvider>
+    </>
+  );
+}
+
+function List() {
+  const listItems = places.map((place) => (
+    <li key={place.id}>
+      <Place place={place} />
+    </li>
+  ));
+  return <ul>{listItems}</ul>;
+}
+
+function Place({ place }) {
+  return (
+    <>
+      <PlaceImage place={place} />
+      <p>
+        <b>{place.name}</b>
+        {": " + place.description}
+      </p>
+    </>
+  );
+}
+
+function PlaceImage({ place }) {
+  const imageSize = useImageSize();
+  return (
+    <img
+      src={getImageUrl(place)}
+      alt={place.name}
+      width={imageSize}
+      height={imageSize}
+    />
+  );
 }

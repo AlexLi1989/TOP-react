@@ -1,60 +1,31 @@
-import { useState } from "react"; // 💡 1. 記得匯入 useState
-import { places } from "./data/data.js";
-import { getImageUrl } from "./components/utils";
-import { ImageSizeProvider } from "./components/ImageSizeContext";
-import { useImageSize } from "./components/useImageSize";
+import { useReducer } from "react";
+import Chat from "./components/Chat";
+import ContactList from "./components/ContactLists.jsx";
+import { initialState, messengerReducer } from "./components/messengerReducer";
 
-export default function App() {
-  const [isLarge, setIsLarge] = useState(false);
-  const imageSize = isLarge ? 150 : 100;
-
+export default function Messenger() {
+  const [state, dispatch] = useReducer(messengerReducer, initialState);
+  const message = state.message;
+  const contact = contacts.find((c) => c.id === state.selectedId);
   return (
-    <>
-      <label>
-        <input
-          type="checkbox"
-          checked={isLarge}
-          onChange={(e) => setIsLarge(e.target.checked)}
-        />
-        Use large images
-      </label>
-      <hr />
-      <ImageSizeProvider value={imageSize}>
-        <List />
-      </ImageSizeProvider>
-    </>
+    <div>
+      <ContactList
+        contacts={contacts}
+        selectedId={state.selectedId}
+        dispatch={dispatch}
+      />
+      <Chat
+        key={contact.id}
+        message={message}
+        contact={contact}
+        dispatch={dispatch}
+      />
+    </div>
   );
 }
 
-function List() {
-  const listItems = places.map((place) => (
-    <li key={place.id}>
-      <Place place={place} />
-    </li>
-  ));
-  return <ul>{listItems}</ul>;
-}
-
-function Place({ place }) {
-  return (
-    <>
-      <PlaceImage place={place} />
-      <p>
-        <b>{place.name}</b>
-        {": " + place.description}
-      </p>
-    </>
-  );
-}
-
-function PlaceImage({ place }) {
-  const imageSize = useImageSize();
-  return (
-    <img
-      src={getImageUrl(place)}
-      alt={place.name}
-      width={imageSize}
-      height={imageSize}
-    />
-  );
-}
+const contacts = [
+  { id: 0, name: "Taylor", email: "taylor@mail.com" },
+  { id: 1, name: "Alice", email: "alice@mail.com" },
+  { id: 2, name: "Bob", email: "bob@mail.com" },
+];

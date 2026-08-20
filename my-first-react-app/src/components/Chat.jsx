@@ -1,7 +1,10 @@
+import { useState } from "react";
+
 export default function Chat({ contact, message, dispatch }) {
-  const handleEdit = (message) => {
+  const handlerSend = (contact, message) => {
+    alert(`${contact.email} has sent ${message}`);
     dispatch({
-      type: "edited_message",
+      type: "send_message",
       message: message,
     });
   };
@@ -11,12 +14,16 @@ export default function Chat({ contact, message, dispatch }) {
         value={message}
         placeholder={"Chat to " + contact.name}
         onChange={(e) => {
-          handleEdit(e.target.value);
-          // (Read the input value from e.target.value)
+          dispatch({
+            type: "edited_message",
+            message: e.target.value,
+          });
         }}
       />
       <br />
-      <button>Send to {contact.email}</button>
+      <button onClick={() => handlerSend(contact, message)}>
+        Send to {contact.email}
+      </button>
     </section>
   );
 }

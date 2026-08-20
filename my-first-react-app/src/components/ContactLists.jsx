@@ -1,10 +1,4 @@
 export default function ContactList({ contacts, selectedId, dispatch }) {
-  const handleChangeSelection = (contactId) => {
-    dispatch({
-      type: "changed_selection",
-      contactId: contactId,
-    });
-  };
   return (
     <section className="contact-list">
       <ul>
@@ -12,7 +6,10 @@ export default function ContactList({ contacts, selectedId, dispatch }) {
           <li key={contact.id}>
             <button
               onClick={() => {
-                handleChangeSelection(contact.id);
+                dispatch({
+                  type: "changed_selection",
+                  contactId: contact.id,
+                });
               }}
             >
               {selectedId === contact.id ? <b>{contact.name}</b> : contact.name}

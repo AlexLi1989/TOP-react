@@ -5,7 +5,7 @@ import { initialState, messengerReducer } from "./components/messengerReducer";
 
 export default function Messenger() {
   const [state, dispatch] = useReducer(messengerReducer, initialState);
-  const message = state.message;
+  const message = state.message[state.selectedId];
   const contact = contacts.find((c) => c.id === state.selectedId);
   return (
     <div>

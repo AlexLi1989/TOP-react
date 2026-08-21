@@ -1,39 +1,15 @@
-import { useState, useRef } from "react";
-
-export default function VideoPlayer() {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const videoRef = useRef(null);
-
-  function handleClick() {
-    const nextIsPlaying = !isPlaying;
-    setIsPlaying(nextIsPlaying);
-    if (nextIsPlaying) {
-      videoRef.current.play();
-    } else {
-      videoRef.current.pause();
-    }
-  }
-  function syncOnPlay() {
-    setIsPlaying(true);
-  }
-  function syncOnPause() {
-    setIsPlaying(false);
-  }
-
+import { useRef } from "react";
+export default function Page() {
+  const inputRef = useRef(null);
+  const clickHandler = () => {
+    inputRef.current.focus();
+  };
   return (
     <>
-      <button onClick={handleClick}>{isPlaying ? "Pause" : "Play"}</button>
-      <video
-        width="250"
-        ref={videoRef}
-        onPlay={syncOnPlay}
-        onPause={syncOnPause}
-      >
-        <source
-          src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"
-          type="video/mp4"
-        />
-      </video>
+      <nav>
+        <button onClick={clickHandler}>Search</button>
+      </nav>
+      <input placeholder="Looking for something?" ref={inputRef} />
     </>
   );
 }
